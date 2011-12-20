@@ -1,0 +1,126 @@
+﻿#region License
+// Copyright 2011 Jason Walker
+// ungood@onetrue.name
+// 
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+#endregion
+
+using System;
+using BadaBingBot.Api;
+using BadaBingBot.Xmpp.Config;
+using agsXMPP;
+using agsXMPP.Xml.Dom;
+using agsXMPP.protocol.client;
+using agsXMPP.protocol.x.muc;
+
+namespace BadaBingBot.Xmpp
+{
+    public class XmppPluginInstance : IPluginInstance
+    {
+        private readonly XmppClientConnection client;
+        private readonly XmppConfig config;
+        private readonly MucManager chatManager;
+        private readonly IRobot robot;
+
+        public XmppPluginInstance(XmppConfig config, IRobot robot)
+        {
+            this.config = config;
+            this.robot = robot;
+
+            client = new XmppClientConnection {
+                Resource = config.Resource,
+                Server = config.Server,
+                Port = config.Port,
+                Username = config.Username,
+                Password = config.Password,
+                UseSSL = config.UseSSL,
+                UseStartTLS = config.UseStartTLS,
+                AutoPresence = true,
+                AutoAgents = true,
+                AutoRoster = true,
+            };
+
+            chatManager = new MucManager(client);
+
+            client.OnAuthError += OnAuthError;
+            client.OnError += OnError;
+            client.OnLogin += OnLogin;
+            client.OnPresence += OnPresence;
+            client.OnMessage += OnMessage;
+        }
+
+        public void Load()
+        {
+            client.Open();
+        }
+
+        public void Unload()
+        {
+            
+        }
+
+        private void OnError(object sender, Exception ex)
+        {
+            robot.Log.Error("Unhandled XMPP Error", ex);
+        }
+
+        private void OnAuthError(object sender, Element element)
+        {
+            robot.Log.ErrorFormat("Could not connect: {0}", element.ToString());
+        }
+
+        private void OnLogin(object sender)
+        {
+            client.Status = "BadaBingBot!";
+            client.Show = ShowType.chat;
+            client.SendMyPresence();
+
+            foreach (var room in config.Rooms)
+            {
+                var nickname = room.Nickname ?? config.Username;
+                var jid = new Jid(room.Jid);
+                chatManager.JoinRoom(jid, nickname, room.Password, true);
+                chatManager.AcceptDefaultConfiguration(jid);
+            }
+        }
+
+        private void OnPresence(object sender, Presence pres)
+        {
+            robot.Log.DebugFormat("Presence received from {0} [{1}]: {2}",
+                pres.From, pres.Type, pres.Status);
+
+            if(pres.Type == PresenceType.subscribe)
+                client.PresenceManager.ApproveSubscriptionRequest(pres.From);
+        }
+
+        private void OnMessage(object sender, Message msg)
+        {
+            if(string.IsNullOrEmpty(msg.Body)
+                || msg.From == null
+                || msg.From == client.MyJID)
+                return;
+
+            robot.Log.DebugFormat("Message received from {0} [{1}]: {2}",
+                msg.From, msg.Type, msg.Body);
+
+            
+            if(msg.Type == MessageType.chat || msg.Type == MessageType.groupchat)
+            {
+                var chatMessage = new ChatMessage(client, msg) {
+                    Sender = this
+                };
+                robot.Publish(chatMessage);
+            }
+        }
+    }
+}
