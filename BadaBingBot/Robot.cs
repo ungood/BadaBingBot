@@ -37,7 +37,7 @@ namespace BadaBingBot
             messageQueue = new Subject<IMessage>();
             subscribers = new List<IDisposable>();
 
-            Subscribe(Test);
+            Subscribe<IMessage>(Test);
         }
 
         private void Test(IMessage obj)
@@ -54,11 +54,12 @@ namespace BadaBingBot
             messageQueue.OnNext(message);
         }
 
-        public IDisposable Subscribe(Action<IMessage> subscriber)
+        public IDisposable Subscribe<TMessage>(Action<TMessage> subscriber)
+            where TMessage : IMessage
         {
-            var handle = messageQueue.Subscribe(subscriber);
-            subscribers.Add(handle);
-            return handle;
+             var handle = messageQueue.OfType<TMessage>().Subscribe(subscriber);
+             subscribers.Add(handle);
+             return handle;
         }
 
         public void ScheduleJob(TimeSpan interval, Action<IRobot> action)

@@ -22,6 +22,8 @@ using System.Reflection;
 using System.Threading;
 using BadaBingBot.Api;
 using Common.Logging;
+using CommonServiceLocator.NinjectAdapter;
+using Microsoft.Practices.ServiceLocation;
 using Ninject;
 using Ninject.Activation;
 using Ninject.Extensions.Conventions;
@@ -54,6 +56,8 @@ namespace BadaBingBot
         private static IKernel CreateKernel()
         {
             var kernel = new StandardKernel(new RobotNinjaModule());
+            var csl = new NinjectServiceLocator(kernel);
+            kernel.Bind<IServiceLocator>().ToConstant(csl);
             LoadPluginAssemblies(kernel, kernel.Get<IConfig>());
             return kernel;
         }

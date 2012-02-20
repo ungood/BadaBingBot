@@ -14,6 +14,8 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\BadaBingBot\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,20 +37,36 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AboditUnits">
+      <HintPath>..\packages\AboditUnits.1.0.127\lib\net40\AboditUnits.dll</HintPath>
+    </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging.Log4Net">
       <HintPath>..\packages\Common.Logging.Log4Net.2.0.0\lib\2.0\Common.Logging.Log4Net.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    <Reference Include="CommonServiceLocator.NinjectAdapter">
+      <HintPath>..\packages\XAct.Ninject.CommonServiceLocator.0.0.1\lib\net40\CommonServiceLocator.NinjectAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="ImpromptuInterface">
+      <HintPath>..\packages\ImpromptuInterface.5.6.6\lib\net40\ImpromptuInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.1.2.11\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Ninject.Extensions.Conventions">
       <HintPath>..\packages\ninject.extensions.conventions.2.2.0.5\lib\net40-Full\Ninject.Extensions.Conventions.dll</HintPath>
+    </Reference>
+    <Reference Include="NLP">
+      <HintPath>..\packages\AboditNLP.1.0.127\lib\net40\NLP.dll</HintPath>
     </Reference>
     <Reference Include="Rxx">
       <HintPath>..\packages\Rxx.1.2.4329.35077\lib\net40\Rxx.dll</HintPath>
@@ -110,4 +128,5 @@
     <MakeDir Directories="$(PluginDir)" />
     <Copy DestinationFolder="$(PluginDir)" SourceFiles="@(PluginDll)" />
   </Target>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

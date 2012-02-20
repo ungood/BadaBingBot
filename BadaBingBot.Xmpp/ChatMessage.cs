@@ -18,7 +18,9 @@
 using System;
 using BadaBingBot.Api;
 using agsXMPP;
+using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
+using agsXMPP.protocol.extensions.html;
 
 namespace BadaBingBot.Xmpp
 {
@@ -51,7 +53,19 @@ namespace BadaBingBot.Xmpp
                 ? MessageType.groupchat
                 : MessageType.chat;
 
-            client.Send(new Message(to, type, text));
+            var html = new Html {
+                Body = new Body {
+                    InnerXml = "<img src='http://webdev06/failboat' alt='All aboard the failboat!' />"
+                }
+            };
+                        
+            var msg = new Message(to) {
+                Type = type,
+                Html = html
+            };
+
+            
+            client.Send(msg);
         }
     }
 }

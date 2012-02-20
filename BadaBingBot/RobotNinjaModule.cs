@@ -23,6 +23,7 @@ using BadaBingBot.Config;
 using Common.Logging;
 using Common.Logging.Log4Net;
 using Common.Logging.Simple;
+using Microsoft.Practices.ServiceLocation;
 using Ninject.Activation;
 using Ninject.Modules;
 

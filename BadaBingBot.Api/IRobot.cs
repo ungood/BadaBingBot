@@ -26,6 +26,8 @@ namespace BadaBingBot.Api
 
         void ScheduleJob(TimeSpan interval, Action<IRobot> action);
         void Publish(IMessage message);
-        IDisposable Subscribe(Action<IMessage> subscriber);
+
+        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber)
+            where TMessage : IMessage;
     }
 }

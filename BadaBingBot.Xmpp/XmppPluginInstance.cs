@@ -16,11 +16,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using BadaBingBot.Api;
 using BadaBingBot.Xmpp.Config;
 using agsXMPP;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
+using agsXMPP.protocol.iq.disco;
+using agsXMPP.protocol.x.data;
 using agsXMPP.protocol.x.muc;
 
 namespace BadaBingBot.Xmpp
@@ -31,6 +34,8 @@ namespace BadaBingBot.Xmpp
         private readonly XmppConfig config;
         private readonly MucManager chatManager;
         private readonly IRobot robot;
+
+        private readonly HashSet<string> ignoredJids = new HashSet<string>(); 
 
         public XmppPluginInstance(XmppConfig config, IRobot robot)
         {
@@ -45,6 +50,7 @@ namespace BadaBingBot.Xmpp
                 Password = config.Password,
                 UseSSL = config.UseSSL,
                 UseStartTLS = config.UseStartTLS,
+                KeepAlive = true,
                 AutoPresence = true,
                 AutoAgents = true,
                 AutoRoster = true,
@@ -57,6 +63,25 @@ namespace BadaBingBot.Xmpp
             client.OnLogin += OnLogin;
             client.OnPresence += OnPresence;
             client.OnMessage += OnMessage;
+            client.OnIq += ClientOnOnIq;
+
+            client.DiscoInfo.AddFeature(new DiscoFeature("urn:xmpp:bob"));
+        }
+
+        private void ClientOnOnIq(object sender, IQ iq)
+        {
+            if(iq.Type != IqType.get)
+                return;
+
+            var data = iq.FirstChild;
+            if(data == null || data.TagName != "data")
+                return;
+
+            if(!data.HasAttribute("cid"))
+                return;
+
+            var cid = data.GetAttribute("cid");
+
         }
 
         public void Load()
@@ -67,6 +92,11 @@ namespace BadaBingBot.Xmpp
         public void Unload()
         {
             
+        }
+
+        private void AddIgnore(string ignoredJid)
+        {
+            ignoredJids.Add(ignoredJid.ToLowerInvariant());
         }
 
         private void OnError(object sender, Exception ex)
@@ -84,13 +114,16 @@ namespace BadaBingBot.Xmpp
             client.Status = "BadaBingBot!";
             client.Show = ShowType.chat;
             client.SendMyPresence();
+            AddIgnore(client.MyJID.ToString());
 
             foreach (var room in config.Rooms)
             {
                 var nickname = room.Nickname ?? config.Username;
-                var jid = new Jid(room.Jid);
-                chatManager.JoinRoom(jid, nickname, room.Password, true);
-                chatManager.AcceptDefaultConfiguration(jid);
+                var roomJid = new Jid(room.Jid);
+                AddIgnore(room.Jid + "/" + nickname);
+                
+                chatManager.JoinRoom(roomJid, nickname, room.Password, true);
+                chatManager.AcceptDefaultConfiguration(roomJid);
             }
         }
 
@@ -107,7 +140,7 @@ namespace BadaBingBot.Xmpp
         {
             if(string.IsNullOrEmpty(msg.Body)
                 || msg.From == null
-                || msg.From == client.MyJID)
+                || ignoredJids.Contains(msg.From.ToString().ToLowerInvariant()))
                 return;
 
             robot.Log.DebugFormat("Message received from {0} [{1}]: {2}",
