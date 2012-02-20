@@ -35,12 +35,11 @@ namespace BadaBingBot
     {
         public static void Main(string[] args)
         {
-            HostFactory.Run(host => {
-                host.SetDisplayName("BadaBing Bot");
-                host.SetServiceName("BadaBingBot");
-                host.SetDescription("A .NET Developer Bot");
-
-                host.Service<RobotProgram>(svc => {
+            var host = HostFactory.New(cfg => {
+                cfg.SetDisplayName("BadaBing Bot");
+                cfg.SetServiceName("BadaBingBot");
+                cfg.SetDescription("A .NET Developer Bot");
+                cfg.Service<RobotProgram>(svc => {
                     svc.ConstructUsing(() => {
                         var kernel = CreateKernel();
                         return kernel.Get<RobotProgram>();
@@ -49,8 +48,15 @@ namespace BadaBingBot
                     svc.WhenStopped(robot => robot.Terminate());
                 });
 
-                host.RunAsLocalService();
+                cfg.RunAsLocalService();
             });
+            
+            host.Run();
+            if(Environment.UserInteractive)
+            {
+                Console.WriteLine("Press any key..");
+                Console.ReadKey(true);
+            }
         }
 
         private static IKernel CreateKernel()
@@ -76,13 +82,20 @@ namespace BadaBingBot
             foreach (var file in Directory.GetFiles(pluginDir, "*.dll"))
             {
                 log.DebugFormat("Loading Assembly: {0}", file);
-                pluginAssemblies.Add(Assembly.LoadFrom(file));
+                try
+                {
+                    pluginAssemblies.Add(Assembly.LoadFrom(file));
+                }
+                catch(Exception ex)
+                {
+                    log.Error("Failed to load assembly " + file, ex);
+                }
             }
 
             kernel.Scan(scanner => {
                 scanner.From(pluginAssemblies);
                 scanner.AutoLoadModules();
-                scanner.WhereTypeInheritsFrom<IPlugin>();
+                //scanner.WhereTypeInheritsFrom<IPlugin>();
                 scanner.BindWith<PluginBindingGenerator<IPlugin>>();
             });
         }
