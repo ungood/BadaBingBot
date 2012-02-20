@@ -26,7 +26,8 @@ namespace BadaBingBot.Chat
 
         public override IPluginInstance CreateInstance(XElement configElement, IRobot robot)
         {
-            throw new NotImplementedException();
+            var config = robot.ServiceLocator.GetInstance<IConfig>();
+            return new ChatPluginInstance(robot, config.Plugins.Directory, robot.ServiceLocator);
         }
     }
 }

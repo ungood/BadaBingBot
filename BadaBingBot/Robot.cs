@@ -21,6 +21,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using BadaBingBot.Api;
 using Common.Logging;
+using Microsoft.Practices.ServiceLocation;
 
 namespace BadaBingBot
 {
@@ -30,9 +31,11 @@ namespace BadaBingBot
         private readonly IList<IDisposable> subscribers;
 
         public ILog Log { get; private set; }
+        public IServiceLocator ServiceLocator { get; private set; }
 
-        public Robot(ILog log)
+        public Robot(IServiceLocator serviceLocator, ILog log)
         {
+            ServiceLocator = serviceLocator;
             Log = log;
             messageQueue = new Subject<IMessage>();
             subscribers = new List<IDisposable>();

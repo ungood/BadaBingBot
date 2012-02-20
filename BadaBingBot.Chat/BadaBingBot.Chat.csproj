@@ -51,6 +51,8 @@
     <Compile Include="ChatPlugin.cs" />
     <Compile Include="ChatPluginInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rules\DebuggingRules.cs" />
+    <Compile Include="Words\Verbs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BadaBingBot.Api\BadaBingBot.Api.csproj">

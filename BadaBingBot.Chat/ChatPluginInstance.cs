@@ -9,14 +9,13 @@ namespace BadaBingBot.Chat
     {
         private readonly IServiceLocator serviceLocator;
         private readonly NLP processor;
-        private readonly IDisposable subscription;
 
-        public ChatPluginInstance(IRobot robot, IConfig config, IServiceLocator serviceLocator)
+        public ChatPluginInstance(IRobot robot, string pluginsDirectory, IServiceLocator serviceLocator)
         {
             this.serviceLocator = serviceLocator;
-            processor = new NLP(config.Plugins.Directory);
+            processor = new NLP(pluginsDirectory);
 
-            subscription = robot.Subscribe<IChatMessage>(ExecuteChatMessage);
+            robot.Subscribe<IChatMessage>(ExecuteChatMessage);
         }
 
         public void Load()

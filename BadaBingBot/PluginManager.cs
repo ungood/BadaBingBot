@@ -69,7 +69,7 @@ namespace BadaBingBot
 
         private struct PluginInfo
         {
-            public IPlugin Plugin { get; set; }
+            public IPlugin Plugin { get; private set; }
             public IList<IPluginInstance> Instances { get; set; }
 
             public PluginInfo(IPlugin plugin) : this()

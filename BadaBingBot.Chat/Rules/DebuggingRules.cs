@@ -15,21 +15,25 @@
 // limitations under the License.
 #endregion
 
-using System;
-using Common.Logging;
-using Microsoft.Practices.ServiceLocation;
+using AboditNLP;
+using BadaBingBot.Api;
+using Verbs;
 
-namespace BadaBingBot.Api
+namespace BadaBingBot.Chat.Rules
 {
-    public interface IRobot
+    public class DebuggingRules : INLPRule
     {
-        IServiceLocator ServiceLocator { get; }
-        ILog Log { get; }
+        private readonly IChatMessage message;
 
-        void ScheduleJob(TimeSpan interval, Action<IRobot> action);
-        void Publish(IMessage message);
+        public DebuggingRules(IChatMessage message)
+        {
+            this.message = message;
+        }
 
-        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber)
-            where TMessage : IMessage;
+        public void Echo(echo echo, ITokenText text)
+        {
+            var reply = string.Format("{0} said \"{1}\"", message.Username, text.Text);
+            message.Reply(reply);
+        }
     }
 }
