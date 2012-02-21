@@ -23,8 +23,9 @@ namespace BadaBingBot.Api
 {
     public interface IRobot
     {
-        IServiceLocator ServiceLocator { get; }
+        IConfig Config { get; }
         ILog Log { get; }
+        IServiceLocator ServiceLocator { get; }
 
         void ScheduleJob(TimeSpan interval, Action<IRobot> action);
         void Publish(IMessage message);

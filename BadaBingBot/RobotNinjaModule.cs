@@ -55,7 +55,7 @@ namespace BadaBingBot
 
         private static ILog GetLogger(IContext context)
         {
-            return LogManager.GetLogger(context.GetType());
+            return LogManager.GetLogger("Robot");
         }
     }
 }

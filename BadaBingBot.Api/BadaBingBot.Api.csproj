@@ -55,7 +55,7 @@
     <Compile Include="IConfig.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="IRobot.cs" />
-    <Compile Include="PluginBase.cs" />
+    <Compile Include="IPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

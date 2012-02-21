@@ -30,13 +30,16 @@ namespace BadaBingBot
         private readonly ISubject<IMessage> messageQueue;
         private readonly IList<IDisposable> subscribers;
 
+        public IConfig Config { get; private set; }
         public ILog Log { get; private set; }
         public IServiceLocator ServiceLocator { get; private set; }
 
-        public Robot(IServiceLocator serviceLocator, ILog log)
+        public Robot(IConfig config, IServiceLocator serviceLocator, ILog log)
         {
+            Config = config;
             ServiceLocator = serviceLocator;
             Log = log;
+
             messageQueue = new Subject<IMessage>();
             subscribers = new List<IDisposable>();
 

@@ -91,7 +91,7 @@ namespace BadaBingBot.Xmpp
 
         public void Unload()
         {
-            
+            client.Close();
         }
 
         private void AddIgnore(string ignoredJid)
@@ -111,6 +111,7 @@ namespace BadaBingBot.Xmpp
 
         private void OnLogin(object sender)
         {
+            robot.Log.Debug("XMPP login success");
             client.Status = "BadaBingBot!";
             client.Show = ShowType.chat;
             client.SendMyPresence();

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using BadaBingBot.Api;
+using Common.Logging;
 
 namespace BadaBingBot.Chat
 {
     public class ChatPlugin : IPlugin
     {
+        private readonly IConfig config;
+        private readonly IRobot robot;
+        private readonly ILog log;
+
         public string Name
         {
             get { return "chat"; }
@@ -26,8 +30,7 @@ namespace BadaBingBot.Chat
 
         public IPluginInstance CreateInstance(XElement configElement, IRobot robot)
         {
-            var config = robot.ServiceLocator.GetInstance<IConfig>();
-            return new ChatPluginInstance(robot, config.Plugins.Directory, robot.ServiceLocator);
+            return new ChatPluginInstance(robot, robot.Config.Plugins.Directory, robot.ServiceLocator);
         }
     }
 }

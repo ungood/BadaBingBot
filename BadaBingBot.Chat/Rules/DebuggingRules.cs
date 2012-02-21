@@ -15,12 +15,14 @@
 // limitations under the License.
 #endregion
 
+using System.ComponentModel.Composition;
 using AboditNLP;
 using BadaBingBot.Api;
 using Verbs;
 
 namespace BadaBingBot.Chat.Rules
 {
+    [Export(typeof(INLPRule))]
     public class DebuggingRules : INLPRule
     {
         private readonly IChatMessage message;
@@ -30,10 +32,12 @@ namespace BadaBingBot.Chat.Rules
             this.message = message;
         }
 
-        public void Echo(echo echo, ITokenText text)
+        public NLPActionResult Echo(echo echo)
         {
-            var reply = string.Format("{0} said \"{1}\"", message.Username, text.Text);
+            var reply = string.Format("{0} said \"{1}\"", message.Username, "TODO");
             message.Reply(reply);
+
+            return NLPActionResult.None;
         }
     }
 }

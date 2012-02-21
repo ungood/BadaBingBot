@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using BadaBingBot.Api;
@@ -95,17 +96,19 @@ namespace BadaBingBot
             kernel.Scan(scanner => {
                 scanner.From(pluginAssemblies);
                 scanner.AutoLoadModules();
-                //scanner.WhereTypeInheritsFrom<IPlugin>();
+                scanner.WhereTypeInheritsFrom<IPlugin>();
                 scanner.BindWith<PluginBindingGenerator<IPlugin>>();
             });
         }
 
         private class PluginBindingGenerator<TPluginInterface> : IBindingGenerator
         {
-            private readonly Type pluginInterfaceType = typeof (TPluginInterface);
+            //private readonly Type pluginInterfaceType = typeof (TPluginInterface);
 
             public void Process(Type type, Func<IContext, object> scopeCallback, IKernel kernel)
             {
+                Type pluginInterfaceType = typeof(TPluginInterface);
+
                 if (!pluginInterfaceType.IsAssignableFrom(type))
                     return;
                 if (type.IsAbstract || type.IsInterface)
