@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using BadaBingBot.Api;
@@ -60,18 +61,23 @@ namespace BadaBingBot
             messageQueue.OnNext(message);
         }
 
-        public IDisposable Subscribe<TMessage>(Action<TMessage> subscriber)
+        public IDisposable Subscribe<TMessage>(Action<TMessage> subscriber, params SubscriptionFilter[] filters)
             where TMessage : IMessage
         {
-             var handle = messageQueue.OfType<TMessage>().Subscribe(subscriber);
-             subscribers.Add(handle);
-             return handle;
+            var observer = messageQueue
+                .OfType<TMessage>();
+            //if (filters != null)
+            //    observer = observer.Where(message => filters.Any(filter => filter.DoesMessageMatch(message)));
+                
+            var handle = observer.Subscribe();
+            subscribers.Add(handle);
+            return handle;
         }
 
-        public void ScheduleJob(TimeSpan interval, Action<IRobot> action)
+        public void ScheduleJob(TimeSpan interval, Action action)
         {
             var timer = Observable.Interval(interval);
-            timer.Subscribe(x => action(this));
+            timer.Subscribe(x => action());
         }
     }
 }

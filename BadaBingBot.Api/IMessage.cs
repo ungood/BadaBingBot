@@ -8,6 +8,7 @@ namespace BadaBingBot.Api
     public interface IMessage
     {
         object Sender { get; }
+        string Category { get; }
         string Text { get; }
     }
 }

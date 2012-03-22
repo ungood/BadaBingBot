@@ -27,10 +27,10 @@ namespace BadaBingBot.Api
         ILog Log { get; }
         IServiceLocator ServiceLocator { get; }
 
-        void ScheduleJob(TimeSpan interval, Action<IRobot> action);
+        void ScheduleJob(TimeSpan interval, Action action);
         void Publish(IMessage message);
 
-        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber)
+        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber, params SubscriptionFilter[] filters)
             where TMessage : IMessage;
     }
 }

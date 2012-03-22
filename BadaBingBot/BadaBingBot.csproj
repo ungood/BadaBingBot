@@ -113,9 +113,9 @@
     <ItemGroup>
       <PluginDll Include="..\BadaBingBot.Xmpp\bin\$(Configuration)\BadaBingBot.Xmpp.dll" />
       <PluginDll Include="..\BadaBingBot.Xmpp\bin\$(Configuration)\agsXmpp.dll" />
-      <PluginDll Include="..\BadaBingBot.Chat\bin\$(Configuration)\AboditUnits.dll" />
-      <PluginDll Include="..\BadaBingBot.Chat\bin\$(Configuration)\NLP.dll" />
-      <PluginDll Include="..\BadaBingBot.Chat\bin\$(Configuration)\BadaBingBot.Chat.dll" />
+      <PluginDll Include="..\BadaBingBot.Jenkins\bin\$(Configuration)\Niles.dll" />
+      <PluginDll Include="..\BadaBingBot.Jenkins\bin\$(Configuration)\Newtonsoft.Json.dll" />
+      <PluginDll Include="..\BadaBingBot.Jenkins\bin\$(Configuration)\BadaBingBot.Jenkins.dll" />
     </ItemGroup>
     <PropertyGroup>
       <PluginDir>$(OutputPath)\Plugins</PluginDir>

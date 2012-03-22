@@ -25,6 +25,9 @@ namespace BadaBingBot.Api
     public abstract class ChatMessageBase : IChatMessage
     {
         public object Sender { get; set; }
+
+        public string Category { get; set; }
+
         public string Text { get; set; }
         public string Username { get; set; }
 

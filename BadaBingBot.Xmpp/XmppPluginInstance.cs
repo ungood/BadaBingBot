@@ -23,7 +23,6 @@ using agsXMPP;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.disco;
-using agsXMPP.protocol.x.data;
 using agsXMPP.protocol.x.muc;
 
 namespace BadaBingBot.Xmpp
@@ -64,7 +63,7 @@ namespace BadaBingBot.Xmpp
             client.OnPresence += OnPresence;
             client.OnMessage += OnMessage;
             client.OnIq += ClientOnOnIq;
-
+            
             client.DiscoInfo.AddFeature(new DiscoFeature("urn:xmpp:bob"));
         }
 
@@ -122,10 +121,21 @@ namespace BadaBingBot.Xmpp
                 var nickname = room.Nickname ?? config.Username;
                 var roomJid = new Jid(room.Jid);
                 AddIgnore(room.Jid + "/" + nickname);
-                
+
                 chatManager.JoinRoom(roomJid, nickname, room.Password, true);
                 chatManager.AcceptDefaultConfiguration(roomJid);
+
+                robot.Subscribe<IMessage>(msg => NotifyRoomOfMessage(roomJid, msg), room.SubscriptionFilters);
             }
+        }
+
+        private void NotifyRoomOfMessage(Jid roomJid, IMessage message)
+        {
+            var notification = new Message(roomJid) {
+                Body = message.Text
+            };
+
+            client.Send(notification);
         }
 
         private void OnPresence(object sender, Presence pres)

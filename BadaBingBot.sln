@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{AF3765
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadaBingBot.Chat", "BadaBingBot.Chat\BadaBingBot.Chat.csproj", "{FCACEACF-9474-4A6F-A857-74A2CA081D60}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,16 +68,6 @@ Global
 		{22AD4CFE-D94D-4122-ABE3-F710923A9F30}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{22AD4CFE-D94D-4122-ABE3-F710923A9F30}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{22AD4CFE-D94D-4122-ABE3-F710923A9F30}.Release|x86.ActiveCfg = Release|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{FCACEACF-9474-4A6F-A857-74A2CA081D60}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

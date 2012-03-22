@@ -53,15 +53,9 @@ namespace BadaBingBot.Xmpp
                 ? MessageType.groupchat
                 : MessageType.chat;
 
-            var html = new Html {
-                Body = new Body {
-                    InnerXml = "<img src='http://webdev06/failboat' alt='All aboard the failboat!' />"
-                }
-            };
-                        
             var msg = new Message(to) {
                 Type = type,
-                Html = html
+                Body = text
             };
 
             

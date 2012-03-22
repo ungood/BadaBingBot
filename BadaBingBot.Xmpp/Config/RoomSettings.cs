@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using BadaBingBot.Api;
 
 namespace BadaBingBot.Xmpp.Config
 {
@@ -16,5 +17,8 @@ namespace BadaBingBot.Xmpp.Config
 
         [XmlAttribute("password")]
         public string Password { get; set; }
+
+        [XmlElement("subscription")]
+        public SubscriptionFilter[] SubscriptionFilters { get; set; }
     }
 }
