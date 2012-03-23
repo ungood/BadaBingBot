@@ -18,7 +18,7 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="Config\PluginElement.cs" />
     <Compile Include="Config\RobotSection.cs" />
+    <Compile Include="Events\IEventAggregator.cs" />
+    <Compile Include="Events\RxEventAggregator.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

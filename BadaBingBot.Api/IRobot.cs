@@ -23,6 +23,8 @@ namespace BadaBingBot.Api
 {
     public interface IRobot
     {
+        // A robot is a collection of senses (input plugins) and behaviors (output plugins) wired together with a nervous system (event aggregator)
+
         IConfig Config { get; }
         ILog Log { get; }
         IServiceLocator ServiceLocator { get; }
