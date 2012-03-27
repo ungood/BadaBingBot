@@ -41,9 +41,7 @@ namespace BadaBingBot.Api
 
         public bool DoesMessageMatch(IMessage message)
         {
-            var categoryMatches = (CategoryPattern == null || CategoryRegex.IsMatch(message.Category));
-            var textMatches = (TextPattern == null || TextRegex.IsMatch(message.Text));
-            return categoryMatches && textMatches;
+            return true;
         }
     }
 }

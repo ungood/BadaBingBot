@@ -62,11 +62,20 @@ namespace BadaBingBot
 
         private static IKernel CreateKernel()
         {
-            var kernel = new StandardKernel(new RobotNinjaModule());
-            var csl = new NinjectServiceLocator(kernel);
-            kernel.Bind<IServiceLocator>().ToConstant(csl);
-            LoadPluginAssemblies(kernel, kernel.Get<IConfig>());
-            return kernel;
+            try
+            {
+                var kernel = new StandardKernel(new RobotNinjaModule());
+                var csl = new NinjectServiceLocator(kernel);
+                kernel.Bind<IServiceLocator>().ToConstant(csl);
+                LoadPluginAssemblies(kernel, kernel.Get<IConfig>());
+                return kernel;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+            
         }
 
         /// <summary>

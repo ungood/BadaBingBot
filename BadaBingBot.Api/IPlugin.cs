@@ -17,8 +17,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Common.Logging;
@@ -32,7 +30,7 @@ namespace BadaBingBot.Api
         string Description { get; }
         Uri Url { get; }
 
-        IPluginInstance CreateInstance(XElement configElement, IRobot robot);
+        IPluginInstance CreateInstance(XElement configElement);
     }
 
     public abstract class PluginBase : IPlugin
@@ -40,7 +38,16 @@ namespace BadaBingBot.Api
         public abstract string Name { get; }
         public abstract string Description { get; }
         public abstract Uri Url { get; }
-        public abstract IPluginInstance CreateInstance(XElement configElement, IRobot robot);
+        public abstract IPluginInstance CreateInstance(XElement configElement);
+
+        protected ILog Log { get; private set; }
+        protected IRobot Robot { get; private set; }
+
+        protected PluginBase(IRobot robot, ILog log)
+        {
+            Log = log;
+            Robot = robot;
+        }
 
         protected TConfig DeserializeConfig<TConfig>(XElement configElement)
         {

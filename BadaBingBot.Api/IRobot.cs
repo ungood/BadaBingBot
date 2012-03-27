@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using Common.Logging;
 using Microsoft.Practices.ServiceLocation;
 
@@ -23,16 +24,9 @@ namespace BadaBingBot.Api
 {
     public interface IRobot
     {
-        // A robot is a collection of senses (input plugins) and behaviors (output plugins) wired together with a nervous system (event aggregator)
-
-        IConfig Config { get; }
-        ILog Log { get; }
-        IServiceLocator ServiceLocator { get; }
-
         void ScheduleJob(TimeSpan interval, Action action);
+        
         void Publish(IMessage message);
-
-        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber, params SubscriptionFilter[] filters)
-            where TMessage : IMessage;
+        IDisposable Subscribe(Action<IMessage> subscriber);
     }
 }

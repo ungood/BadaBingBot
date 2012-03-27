@@ -33,11 +33,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.0.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Niles">
-      <HintPath>..\packages\Niles.1.0.1112.34\lib\net40\Niles.dll</HintPath>
+    <Reference Include="Niles, Version=1.0.1203.19, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Niles.1.0.1203.19\lib\net40\Niles.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,11 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildMessage.cs" />
     <Compile Include="JenkinsConfig.cs" />
     <Compile Include="JenkinsPlugin.cs" />
     <Compile Include="JenkinsPluginInstance.cs" />
+    <Compile Include="JenkinsPoller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RobotJobStateStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

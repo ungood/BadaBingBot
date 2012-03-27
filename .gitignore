@@ -12,6 +12,7 @@ TestResults## Ignore Visual Studio temporary files, build results, and
 *.suo
 *.user
 *.sln.docstates
+*ncrunch*
 
 # Build results
 [Dd]ebug/

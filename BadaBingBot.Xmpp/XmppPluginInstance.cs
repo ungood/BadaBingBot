@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using BadaBingBot.Api;
 using BadaBingBot.Xmpp.Config;
+using Common.Logging;
 using agsXMPP;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
@@ -33,13 +34,15 @@ namespace BadaBingBot.Xmpp
         private readonly XmppConfig config;
         private readonly MucManager chatManager;
         private readonly IRobot robot;
+        private readonly ILog log;
 
         private readonly HashSet<string> ignoredJids = new HashSet<string>(); 
 
-        public XmppPluginInstance(XmppConfig config, IRobot robot)
+        public XmppPluginInstance(XmppConfig config, IRobot robot, ILog log)
         {
             this.config = config;
             this.robot = robot;
+            this.log = log;
 
             client = new XmppClientConnection {
                 Resource = config.Resource,
@@ -100,17 +103,17 @@ namespace BadaBingBot.Xmpp
 
         private void OnError(object sender, Exception ex)
         {
-            robot.Log.Error("Unhandled XMPP Error", ex);
+            log.Error("Unhandled XMPP Error", ex);
         }
 
         private void OnAuthError(object sender, Element element)
         {
-            robot.Log.ErrorFormat("Could not connect: {0}", element.ToString());
+            log.ErrorFormat("Could not connect: {0}", element.ToString());
         }
 
         private void OnLogin(object sender)
         {
-            robot.Log.Debug("XMPP login success");
+            log.Debug("XMPP login success");
             client.Status = "BadaBingBot!";
             client.Show = ShowType.chat;
             client.SendMyPresence();
@@ -125,7 +128,7 @@ namespace BadaBingBot.Xmpp
                 chatManager.JoinRoom(roomJid, nickname, room.Password, true);
                 chatManager.AcceptDefaultConfiguration(roomJid);
 
-                robot.Subscribe<IMessage>(msg => NotifyRoomOfMessage(roomJid, msg), room.SubscriptionFilters);
+                robot.Subscribe(msg => NotifyRoomOfMessage(roomJid, msg));
             }
         }
 
@@ -135,12 +138,12 @@ namespace BadaBingBot.Xmpp
                 Body = message.Text
             };
 
-            client.Send(notification);
+            //client.Send(notification);
         }
 
         private void OnPresence(object sender, Presence pres)
         {
-            robot.Log.DebugFormat("Presence received from {0} [{1}]: {2}",
+            log.DebugFormat("Presence received from {0} [{1}]: {2}",
                 pres.From, pres.Type, pres.Status);
 
             if(pres.Type == PresenceType.subscribe)
@@ -154,7 +157,7 @@ namespace BadaBingBot.Xmpp
                 || ignoredJids.Contains(msg.From.ToString().ToLowerInvariant()))
                 return;
 
-            robot.Log.DebugFormat("Message received from {0} [{1}]: {2}",
+            log.DebugFormat("Message received from {0} [{1}]: {2}",
                 msg.From, msg.Type, msg.Body);
 
             

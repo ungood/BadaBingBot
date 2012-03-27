@@ -1,5 +1,5 @@
 ﻿#region License
-// Copyright 2011 Jason Walker
+// Copyright 2012 Jason Walker
 // ungood@onetrue.name
 // 
 // Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -17,59 +17,34 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using BadaBingBot.Api;
 using Common.Logging;
-using Microsoft.Practices.ServiceLocation;
 
 namespace BadaBingBot
 {
     public class Robot : IRobot
     {
+        private readonly ILog log;
         private readonly ISubject<IMessage> messageQueue;
-        private readonly IList<IDisposable> subscribers;
+        private readonly IList<IDisposable> subscribers = new List<IDisposable>(); 
 
-        public IConfig Config { get; private set; }
-        public ILog Log { get; private set; }
-        public IServiceLocator ServiceLocator { get; private set; }
-
-        public Robot(IConfig config, IServiceLocator serviceLocator, ILog log)
+        public Robot(ILog log)
         {
-            Config = config;
-            ServiceLocator = serviceLocator;
-            Log = log;
-
+            this.log = log;
             messageQueue = new Subject<IMessage>();
-            subscribers = new List<IDisposable>();
-
-            Subscribe<IMessage>(Test);
-        }
-
-        private void Test(IMessage obj)
-        {
-            var chat = obj as IChatMessage;
-            if(chat == null)
-                return;
-
-            chat.Reply("ECHO: " + chat.Text);
         }
 
         public void Publish(IMessage message)
         {
+            log.DebugFormat("Message published: {0}", message.Text);
             messageQueue.OnNext(message);
         }
 
-        public IDisposable Subscribe<TMessage>(Action<TMessage> subscriber, params SubscriptionFilter[] filters)
-            where TMessage : IMessage
+        public IDisposable Subscribe(Action<IMessage> subscriber)
         {
-            var observer = messageQueue
-                .OfType<TMessage>();
-            //if (filters != null)
-            //    observer = observer.Where(message => filters.Any(filter => filter.DoesMessageMatch(message)));
-                
-            var handle = observer.Subscribe();
+            var handle = messageQueue.Subscribe();
             subscribers.Add(handle);
             return handle;
         }

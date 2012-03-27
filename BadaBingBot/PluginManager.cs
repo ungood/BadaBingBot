@@ -43,7 +43,7 @@ namespace BadaBingBot
                 try
                 {
                     log.DebugFormat("Creating and loading instance of plugin {0}", info.Plugin.Name);
-                    var instance = info.Plugin.CreateInstance(pluginElement.Config, robot);
+                    var instance = info.Plugin.CreateInstance(pluginElement.Config);
                     instance.Load();
                     info.Instances.Add(instance);
                 }

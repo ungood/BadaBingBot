@@ -56,7 +56,6 @@
     <Compile Include="IRobot.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleMessage.cs" />
     <Compile Include="SubscriptionFilter.cs" />
   </ItemGroup>
   <ItemGroup>

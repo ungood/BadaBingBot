@@ -15,17 +15,21 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Xml.Linq;
 using BadaBingBot.Api;
 using BadaBingBot.Xmpp.Config;
-using agsXMPP;
-using agsXMPP.protocol.x.muc;
-using Uri = System.Uri;
+using Common.Logging;
 
 namespace BadaBingBot.Xmpp
 {
     public class XmppPlugin : PluginBase
     {
+        public XmppPlugin(IRobot robot, ILog log)
+            : base(robot, log)
+        {
+        }
+
         public override string Name
         {
             get { return "xmpp"; }
@@ -41,10 +45,10 @@ namespace BadaBingBot.Xmpp
             get { return new Uri("http://github.com/ungood/badabingbot"); }
         }
 
-        public override IPluginInstance CreateInstance(XElement configElement, IRobot robot)
+        public override IPluginInstance CreateInstance(XElement configElement)
         {
             var config = DeserializeConfig<XmppConfig>(configElement);
-            return new XmppPluginInstance(config, robot);
+            return new XmppPluginInstance(config, Robot, Log);
         }
     }
 }

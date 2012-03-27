@@ -1,37 +1,43 @@
-﻿using System;
+﻿#region License
+// Copyright 2012 Jason Walker
+// ungood@onetrue.name
+// 
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+#endregion
+
+using System.Collections.Generic;
+using System.Linq;
 using BadaBingBot.Api;
-using Niles.Client;
-using Niles.Monitor;
+using Common.Logging;
 
 namespace BadaBingBot.Jenkins
 {
     public class JenkinsPluginInstance : IPluginInstance
     {
-        private readonly JenkinsConfig config;
-        private readonly IRobot robot;
+        private readonly IList<JenkinsPoller> pollers;
 
-        public JenkinsPluginInstance(JenkinsConfig config, IRobot robot)
+        public JenkinsPluginInstance(JenkinsConfig config, IRobot robot, ILog log)
         {
-            this.config = config;
-            this.robot = robot;
+            pollers = config.Servers.Select(server => new JenkinsPoller(robot, server, log))
+                .ToList();
         }
 
         public void Load()
         {
-            foreach(var server in config.Servers)
-            {
-                //var client = new JsonJenkinsClient();
-                //var monitor = new JenkinsMonitor(client, new RobotJobStateStore());
-
-                robot.ScheduleJob(TimeSpan.FromMilliseconds(server.PollingInterval), () => Poll(server.Url));
-            }
+            foreach(var poller in pollers)
+                poller.StartPolling();
         }
 
-        private void Poll(string serverName)
-        {
-            var text = string.Format("Jenkins build on {0} failed!", serverName);
-            robot.Publish(new SimpleMessage(this, "build.failed", text));
-        }
 
         public void Unload()
         {
