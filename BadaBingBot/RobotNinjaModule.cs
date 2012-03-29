@@ -15,16 +15,10 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Specialized;
 using System.Configuration;
 using BadaBingBot.Api;
 using BadaBingBot.Config;
-using Common.Logging;
-using Common.Logging.Log4Net;
-using Common.Logging.Simple;
-using Microsoft.Practices.ServiceLocation;
-using Ninject.Activation;
+using BadaBingBot.Plugin;
 using Ninject.Modules;
 
 namespace BadaBingBot
@@ -33,13 +27,6 @@ namespace BadaBingBot
     {
         public override void Load()
         {
-            var logConfig = new NameValueCollection();
-            logConfig["configType"] = "FILE-WATCH";
-            logConfig["configFile"] = "~/log4net.config";
-            LogManager.Adapter = new Log4NetLoggerFactoryAdapter(logConfig);
-            Bind<ILog>()
-                .ToMethod(GetLogger);
-
             var config = (RobotSection)ConfigurationManager.GetSection("robot");
             Bind<IConfig>()
                 .ToConstant(config);
@@ -51,11 +38,6 @@ namespace BadaBingBot
             Bind<IRobot>()
                 .To<Robot>()
                 .InSingletonScope();
-        }
-
-        private static ILog GetLogger(IContext context)
-        {
-            return LogManager.GetLogger("Robot");
         }
     }
 }

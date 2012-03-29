@@ -18,7 +18,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BadaBingBot.Api;
-using Common.Logging;
 
 namespace BadaBingBot.Jenkins
 {
@@ -26,9 +25,9 @@ namespace BadaBingBot.Jenkins
     {
         private readonly IList<JenkinsPoller> pollers;
 
-        public JenkinsPluginInstance(JenkinsConfig config, IRobot robot, ILog log)
+        public JenkinsPluginInstance(JenkinsConfig config, IRobot robot, ILogger logger)
         {
-            pollers = config.Servers.Select(server => new JenkinsPoller(robot, server, log))
+            pollers = config.Servers.Select(server => new JenkinsPoller(robot, server, logger))
                 .ToList();
         }
 

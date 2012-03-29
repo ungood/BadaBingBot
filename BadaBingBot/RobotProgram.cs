@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using BadaBingBot.Api;
-using Common.Logging;
+﻿using BadaBingBot.Api;
+using BadaBingBot.Plugin;
 
 namespace BadaBingBot
 {
     public class RobotProgram
     {
-        private ILog log;
+        private ILogger logger;
         private IConfig config;
         private IRobot robot;
         private readonly PluginManager pluginManager;
 
-        public RobotProgram(ILog log, IConfig config, IRobot robot, PluginManager pluginManager)
+        public RobotProgram(ILogger logger, IConfig config, IRobot robot, PluginManager pluginManager)
         {
-            this.log = log;
+            this.logger = logger;
             this.config = config;
             this.robot = robot;
             this.pluginManager = pluginManager;
@@ -25,14 +20,14 @@ namespace BadaBingBot
 
         public void Run()
         {
-            log.InfoFormat("{0} Powering UP!", config.Name);
+            logger.Info("{0} Powering UP!", config.Name);
             pluginManager.LoadPlugins(robot);
         }
 
         public void Terminate()
         {
             pluginManager.UnloadPlugins();
-            log.InfoFormat("{0} has been terminated.", config.Name);
+            logger.Info("{0} has been terminated.", config.Name);
         }
     }
 }

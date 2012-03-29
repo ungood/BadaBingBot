@@ -16,14 +16,11 @@
 #endregion
 
 using System;
-using System.ComponentModel.Composition;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Common.Logging;
 
 namespace BadaBingBot.Api
 {
-    [InheritedExport]
     public interface IPlugin
     {
         string Name { get; }
@@ -40,12 +37,12 @@ namespace BadaBingBot.Api
         public abstract Uri Url { get; }
         public abstract IPluginInstance CreateInstance(XElement configElement);
 
-        protected ILog Log { get; private set; }
+        protected ILogger Logger { get; private set; }
         protected IRobot Robot { get; private set; }
 
-        protected PluginBase(IRobot robot, ILog log)
+        protected PluginBase(IRobot robot, ILogger logger)
         {
-            Log = log;
+            Logger = logger;
             Robot = robot;
         }
 

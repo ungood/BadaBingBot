@@ -18,14 +18,13 @@
 using System;
 using System.Xml.Linq;
 using BadaBingBot.Api;
-using Common.Logging;
 
 namespace BadaBingBot.Jenkins
 {
     public class JenkinsPlugin : PluginBase
     {
-        public JenkinsPlugin(IRobot robot, ILog log)
-            : base(robot, log)
+        public JenkinsPlugin(IRobot robot, ILogger logger)
+            : base(robot, logger)
         {
         }
 
@@ -47,7 +46,7 @@ namespace BadaBingBot.Jenkins
         public override IPluginInstance CreateInstance(XElement configElement)
         {
             var config = DeserializeConfig<JenkinsConfig>(configElement);
-            return new JenkinsPluginInstance(config, Robot, Log);
+            return new JenkinsPluginInstance(config, Robot, Logger);
         }
     }
 }

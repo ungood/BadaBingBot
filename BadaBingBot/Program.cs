@@ -16,15 +16,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
 using BadaBingBot.Api;
+using BadaBingBot.Logging;
+using BadaBingBot.Plugin;
 using Ninject;
-using Ninject.Activation;
-using Ninject.Extensions.Conventions;
 using Topshelf;
 
 namespace BadaBingBot
@@ -33,6 +29,8 @@ namespace BadaBingBot
     {
         public static void Main(string[] args)
         {
+            log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.Config"));
+
             var host = HostFactory.New(cfg => {
                 cfg.SetDisplayName("BadaBing Bot");
                 cfg.SetServiceName("BadaBingBot");
@@ -61,10 +59,10 @@ namespace BadaBingBot
         {
             try
             {
-                var kernel = new StandardKernel(new RobotNinjaModule());
-                var csl = new NinjectServiceLocator(kernel);
-                kernel.Bind<IServiceLocator>().ToConstant(csl);
-                LoadPluginAssemblies(kernel, kernel.Get<IConfig>());
+                var kernel = new StandardKernel(
+                    new RobotNinjaModule(),
+                    new LoggerModule(),
+                    new PluginModule<IPlugin>());
                 return kernel;
             }
             catch(Exception ex)
@@ -73,54 +71,6 @@ namespace BadaBingBot
                 throw;
             }
             
-        }
-
-        /// <summary>
-        /// Load all assemblies in the plugin directory.
-        /// </summary>
-        private static void LoadPluginAssemblies(IKernel kernel, IConfig config)
-        {
-            var pluginDir = Path.GetFullPath(config.Plugins.Directory);
-
-            var log = kernel.Get<ILog>();
-            log.DebugFormat("Plugins Directory: {0}", pluginDir);
-
-            var pluginAssemblies = new List<Assembly>();
-            foreach (var file in Directory.GetFiles(pluginDir, "*.dll"))
-            {
-                log.DebugFormat("Loading Assembly: {0}", file);
-                try
-                {
-                    pluginAssemblies.Add(Assembly.LoadFrom(file));
-                }
-                catch(Exception ex)
-                {
-                    log.Error("Failed to load assembly " + file, ex);
-                }
-            }
-
-            kernel.Scan(scanner => {
-                scanner.From(pluginAssemblies);
-                scanner.AutoLoadModules();
-                scanner.WhereTypeInheritsFrom<IPlugin>();
-                scanner.BindWith<PluginBindingGenerator<IPlugin>>();
-            });
-        }
-
-        private class PluginBindingGenerator<TPluginInterface> : IBindingGenerator
-        {
-            //private readonly Type pluginInterfaceType = typeof (TPluginInterface);
-
-            public void Process(Type type, Func<IContext, object> scopeCallback, IKernel kernel)
-            {
-                Type pluginInterfaceType = typeof(TPluginInterface);
-
-                if (!pluginInterfaceType.IsAssignableFrom(type))
-                    return;
-                if (type.IsAbstract || type.IsInterface)
-                    return;
-                kernel.Bind(pluginInterfaceType).To(type);
-            }
         }
     }
 }

@@ -20,25 +20,24 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using BadaBingBot.Api;
-using Common.Logging;
 
 namespace BadaBingBot
 {
     public class Robot : IRobot
     {
-        private readonly ILog log;
+        private readonly ILogger logger;
         private readonly ISubject<IMessage> messageQueue;
         private readonly IList<IDisposable> subscribers = new List<IDisposable>(); 
 
-        public Robot(ILog log)
+        public Robot(ILogger logger)
         {
-            this.log = log;
+            this.logger = logger;
             messageQueue = new Subject<IMessage>();
         }
 
         public void Publish(IMessage message)
         {
-            log.DebugFormat("Message published: {0}", message.Text);
+            logger.Debug("Message published: {0}", message.Text);
             messageQueue.OnNext(message);
         }
 

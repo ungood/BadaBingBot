@@ -16,9 +16,6 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
-using Common.Logging;
-using Microsoft.Practices.ServiceLocation;
 
 namespace BadaBingBot.Api
 {

@@ -19,22 +19,21 @@ using System;
 using System.Linq;
 using System.Text;
 using BadaBingBot.Api;
-using Common.Logging;
 using Niles.Monitor;
 
 namespace BadaBingBot.Jenkins
 {
     public class JenkinsPoller
     {
-        private readonly ILog log;
+        private readonly ILogger logger;
         private readonly IRobot robot;
         private readonly TimeSpan interval;
         private readonly JenkinsMonitor monitor;
 
-        public JenkinsPoller(IRobot robot, ServerSettings settings, ILog log)
+        public JenkinsPoller(IRobot robot, ServerSettings settings, ILogger logger)
         {
             this.robot = robot;
-            this.log = log;
+            this.logger = logger;
             interval = TimeSpan.FromMilliseconds(settings.PollingInterval);
             monitor = new JenkinsMonitor(new Uri(settings.Url));
 
@@ -55,7 +54,7 @@ namespace BadaBingBot.Jenkins
         {
             try
             {
-                log.DebugFormat("Polling: {0}", monitor.BaseUri);
+                logger.Debug("Polling: {0}", monitor.BaseUri);
                 monitor.Poll(5000);
             }
             catch(TimeoutException)
@@ -65,7 +64,7 @@ namespace BadaBingBot.Jenkins
 
         private void OnPollingError(object sender, PollingErrorEventArgs e)
         {
-            log.Error("Error occured while polling", e.Exception);
+            logger.Error("Error occured while polling", e.Exception);
         }
 
         private void OnBuildStarted(object sender, BuildEventArgs e)

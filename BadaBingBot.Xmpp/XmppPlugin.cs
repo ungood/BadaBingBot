@@ -19,14 +19,13 @@ using System;
 using System.Xml.Linq;
 using BadaBingBot.Api;
 using BadaBingBot.Xmpp.Config;
-using Common.Logging;
 
 namespace BadaBingBot.Xmpp
 {
     public class XmppPlugin : PluginBase
     {
-        public XmppPlugin(IRobot robot, ILog log)
-            : base(robot, log)
+        public XmppPlugin(IRobot robot, ILogger logger)
+            : base(robot, logger)
         {
         }
 
@@ -48,7 +47,7 @@ namespace BadaBingBot.Xmpp
         public override IPluginInstance CreateInstance(XElement configElement)
         {
             var config = DeserializeConfig<XmppConfig>(configElement);
-            return new XmppPluginInstance(config, Robot, Log);
+            return new XmppPluginInstance(config, Robot, Logger);
         }
     }
 }
