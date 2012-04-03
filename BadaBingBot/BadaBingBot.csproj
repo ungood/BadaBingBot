@@ -70,6 +70,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caliburn.Micro\EventAggregator.cs" />
+    <Compile Include="Caliburn.Micro\ExtensionMethods.cs" />
     <Compile Include="Config\PluginElement.cs" />
     <Compile Include="Config\RobotSection.cs" />
     <Compile Include="Logging\LoggerModule.cs" />
@@ -97,13 +99,14 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   -->
-  <Target Name="AfterBuild">
+  <Target Name="CopyPlugins">
     <ItemGroup>
       <PluginDll Include="..\BadaBingBot.Xmpp\bin\$(Configuration)\BadaBingBot.Xmpp.dll" />
       <PluginDll Include="..\BadaBingBot.Xmpp\bin\$(Configuration)\agsXmpp.dll" />

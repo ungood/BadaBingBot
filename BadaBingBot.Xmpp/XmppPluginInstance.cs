@@ -127,7 +127,7 @@ namespace BadaBingBot.Xmpp
                 chatManager.JoinRoom(roomJid, nickname, room.Password, true);
                 chatManager.AcceptDefaultConfiguration(roomJid);
 
-                robot.Subscribe(msg => NotifyRoomOfMessage(roomJid, msg));
+                robot.Subscribe<IMessage>(msg => NotifyRoomOfMessage(roomJid, msg));
             }
         }
 

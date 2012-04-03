@@ -18,40 +18,96 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
+using System.Reflection;
+using System.Threading.Tasks;
 using BadaBingBot.Api;
+using Caliburn.Micro;
 
 namespace BadaBingBot
 {
     public class Robot : IRobot
     {
         private readonly ILogger logger;
-        private readonly ISubject<IMessage> messageQueue;
-        private readonly IList<IDisposable> subscribers = new List<IDisposable>(); 
+
+        private readonly EventAggregator aggregator;
+        private readonly TaskFactory taskFactory;
 
         public Robot(ILogger logger)
         {
             this.logger = logger;
-            messageQueue = new Subject<IMessage>();
+
+            taskFactory = new TaskFactory();
+            aggregator = new EventAggregator {
+                PublicationThreadMarshaller = PublicationThreadMarshaller
+            };
         }
 
-        public void Publish(IMessage message)
+        private void PublicationThreadMarshaller(Action action)
         {
-            logger.Debug("Message published: {0}", message.Text);
-            messageQueue.OnNext(message);
+            taskFactory.StartNew(() => {
+                try
+                {
+                    action();
+                }
+                catch(TargetInvocationException ex)
+                {
+                    logger.Error(ex.InnerException, "Unhandled exception thrown by a message subscriber.");
+                }
+            });
         }
 
-        public IDisposable Subscribe(Action<IMessage> subscriber)
+        public IDisposable Subscribe<TMessage>(Action<TMessage> callback)
+            where TMessage : IMessage
         {
-            var handle = messageQueue.Subscribe();
-            subscribers.Add(handle);
-            return handle;
+            var handler = new ActionHandler<TMessage>(callback);
+            aggregator.Subscribe(handler);
+            return new SubscriptionToken<TMessage>(aggregator, handler);
+        }
+
+        public void Publish<TMessage>(TMessage message) where TMessage : IMessage
+        {
+            aggregator.Publish(message);
         }
 
         public void ScheduleJob(TimeSpan interval, Action action)
         {
             var timer = Observable.Interval(interval);
             timer.Subscribe(x => action());
+        }
+
+        private class SubscriptionToken<TMessage> : IDisposable
+        {
+            private EventAggregator aggregator;
+            private readonly IHandle<TMessage> handler;
+
+            public SubscriptionToken(EventAggregator aggregator, IHandle<TMessage> handler)
+            {
+                this.aggregator = aggregator;
+                this.handler = handler;
+            }
+
+            public void Dispose()
+            {
+                if(aggregator == null)
+                    throw new ObjectDisposedException("This object has been disposed already");
+                aggregator.Unsubscribe(handler);
+                aggregator = null;
+            }
+        }
+
+        private class ActionHandler<TMessage> : IHandle<TMessage>
+        {
+            private readonly Action<TMessage> action;
+
+            public ActionHandler(Action<TMessage> action)
+            {
+                this.action = action;
+            }
+
+            public void Handle(TMessage message)
+            {
+                action(message);
+            }
         }
     }
 }
