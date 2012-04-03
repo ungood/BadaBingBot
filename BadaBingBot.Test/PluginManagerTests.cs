@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using BadaBingBot.Api;
 using BadaBingBot.Plugin;
 using BadaBingBot.Test.Fakes;
@@ -14,13 +12,11 @@ namespace BadaBingBot.Test
     public class PluginManagerTests
     {
         private ILogger logger;
-        private IRobot robot;
-
+        
         [SetUp]
         public void Setup()
         {
             logger = Substitute.For<ILogger>();
-            robot = Substitute.For<IRobot>();
         }
 
         private IConfig SetupConfig(params string[] names)
@@ -44,7 +40,7 @@ namespace BadaBingBot.Test
         {
             var manager = new PluginManager(SetupConfig(), logger, Enumerable.Empty<IPlugin>());
 
-            manager.LoadPlugins(robot);
+            manager.LoadPlugins();
             manager.UnloadPlugins();
 
             logger.DidNotReceive().Info(Arg.Any<string>(), Arg.Any<object[]>());
@@ -56,9 +52,10 @@ namespace BadaBingBot.Test
             var config = SetupConfig("fooplugin");
             var manager = new PluginManager(config, logger, Enumerable.Empty<IPlugin>());
 
-            manager.LoadPlugins(robot);
+            manager.LoadPlugins();
 
             logger.Received().Error(Arg.Any<string>(), "fooplugin");
+            Assert.AreEqual(0, manager.LoadedPlugins.Count());
         }
 
         [Test]
@@ -72,17 +69,64 @@ namespace BadaBingBot.Test
             };
             var manager = new PluginManager(config, logger, plugins);
 
-            manager.LoadPlugins(robot);
-            manager.UnloadPlugins();
-
+            manager.LoadPlugins();
             Assert.IsTrue(loadCalled);
+            Assert.AreEqual(1, manager.LoadedPlugins.Count());
+            Assert.AreEqual(1, manager.LoadedPlugins.First().Instances.Count());
+
+            manager.UnloadPlugins();
             Assert.IsTrue(unloadCalled);
+            Assert.AreEqual(0, manager.LoadedPlugins.Count());
+        }
+
+        [Test]
+        public void ExceptionDuringCreateInstanceShouldLogError()
+        {
+            var config = SetupConfig("fooplugin");
+            var plugins = new[] {
+                new ThrowingCreateInstancePlugin("fooplugin"), 
+            };
+            var manager = new PluginManager(config, logger, plugins);
+
+            manager.LoadPlugins();
+            logger.Received().Error(Arg.Any<Exception>(), Arg.Any<string>(), "fooplugin");
+            Assert.AreEqual(1, manager.LoadedPlugins.Count());
+            Assert.AreEqual(0, manager.LoadedPlugins.First().Instances.Count());
+
+            manager.UnloadPlugins();
         }
 
         [Test]
         public void ExceptionDuringLoadShouldLogError()
         {
+            var config = SetupConfig("fooplugin");
+            var plugins = new[] {
+                new ThrowingLoadPlugin("fooplugin")
+            };
+            var manager = new PluginManager(config, logger, plugins);
 
+            manager.LoadPlugins();
+            logger.Received().Error(Arg.Any<Exception>(), Arg.Any<string>(), "fooplugin");
+            Assert.AreEqual(1, manager.LoadedPlugins.Count());
+            Assert.AreEqual(0, manager.LoadedPlugins.First().Instances.Count());
+
+            manager.UnloadPlugins();
+        }
+
+        [Test]
+        public void ExceptionDuringUnloadShouldLogError()
+        {
+            var config = SetupConfig("fooplugin");
+            var plugins = new[] {
+                new ThrowingUnloadPlugin("fooplugin")
+            };
+            var manager = new PluginManager(config, logger, plugins);
+
+            manager.LoadPlugins();
+            logger.DidNotReceive().Error(Arg.Any<Exception>(), Arg.Any<string>(), "fooplugin");
+
+            manager.UnloadPlugins();
+            logger.Received().Error(Arg.Any<Exception>(), Arg.Any<string>(), "fooplugin");
         }
     }
 }

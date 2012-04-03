@@ -15,23 +15,28 @@ namespace BadaBingBot.Plugin
     {
         public override void Load()
         {
+            var logger = Kernel.Get<ILogger>();
             var config = Kernel.Get<IConfig>();
-            var log = Kernel.Get<ILogger>();
+            Load(config, logger);
+        }
+
+        public void Load(IConfig config, ILogger logger)
+        {
             var pluginDirectory = new DirectoryInfo(config.Plugins.Directory);
 
-            log.Debug("Plugins Directory: {0}", pluginDirectory);
+            logger.Info("Plugins Directory: {0}", pluginDirectory);
 
             var pluginAssemblies = new List<Assembly>();
             foreach (var file in pluginDirectory.GetFiles("*.dll"))
             {
-                log.Debug("Loading Assembly: {0}", file);
+                logger.Info("Loading Assembly: {0}", file);
                 try
                 {
                     pluginAssemblies.Add(Assembly.LoadFrom(file.FullName));
                 }
                 catch(Exception ex)
                 {
-                    log.Error("Failed to load assembly " + file, ex);
+                    logger.Error("Failed to load assembly " + file, ex);
                 }
             }
 

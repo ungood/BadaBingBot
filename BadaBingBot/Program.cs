@@ -59,10 +59,10 @@ namespace BadaBingBot
         {
             try
             {
-                var kernel = new StandardKernel(
-                    new RobotNinjaModule(),
-                    new LoggerModule(),
-                    new PluginModule<IPlugin>());
+                var kernel = new StandardKernel();
+                kernel.Load<RobotNinjaModule>();
+                kernel.Load<LoggerModule>();
+                kernel.Load<PluginModule<IPlugin>>();
                 return kernel;
             }
             catch(Exception ex)

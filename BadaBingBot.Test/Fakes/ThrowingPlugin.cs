@@ -7,9 +7,9 @@ using BadaBingBot.Api;
 
 namespace BadaBingBot.Test.Fakes
 {
-    public class ThrowingCreateInstance : FakePlugin
+    public class ThrowingCreateInstancePlugin : FakePlugin
     {
-        public ThrowingCreateInstance(string name)
+        public ThrowingCreateInstancePlugin(string name)
             : base(name)
         {
         }
@@ -34,7 +34,7 @@ namespace BadaBingBot.Test.Fakes
     public class ThrowingUnloadPlugin : FakePlugin
     {
         public ThrowingUnloadPlugin(string name)
-            : base(name, () => {
+            : base(name, null, () => {
                 throw new NotImplementedException();
             })
 

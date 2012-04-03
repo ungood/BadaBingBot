@@ -21,6 +21,8 @@ namespace BadaBingBot.Api
 {
     public interface IRobot
     {
+        string Name { get; }
+
         void ScheduleJob(TimeSpan interval, Action action);
 
         void Publish<TMessage>(TMessage message)

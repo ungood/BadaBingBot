@@ -9,7 +9,12 @@ namespace BadaBingBot.Plugin
     {
         private readonly ILogger logger;
         private readonly IConfig config;
-        private readonly IDictionary<string, PluginInfo> plugins; 
+        private readonly IDictionary<string, PluginInfo> plugins;
+        
+        public IEnumerable<PluginInfo> LoadedPlugins
+        {
+            get { return plugins.Values; }
+        }
 
         public PluginManager(IConfig config, ILogger logger, IEnumerable<IPlugin> plugins)
         {
@@ -20,7 +25,7 @@ namespace BadaBingBot.Plugin
                 .ToDictionary(p => p.Name, p => new PluginInfo(p));
         }
 
-        public void LoadPlugins(IRobot robot)
+        public void LoadPlugins()
         {
             foreach(var info in plugins.Values)
             {
@@ -40,15 +45,15 @@ namespace BadaBingBot.Plugin
 
                 try
                 {
-                    logger.Debug("Creating and loading instance of plugin {0}", info.Plugin.Name);
+                    logger.Info("Creating and loading instance of plugin {0}", info.Plugin.Name);
                     var instance = info.Plugin.CreateInstance(pluginElement.Config);
                     instance.Load();
                     info.Instances.Add(instance);
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Unhandled exception while loading instance of plugin {0}",
-                        ex, info.Plugin.Name);
+                    logger.Error(ex, "Unhandled exception while loading instance of plugin {0}",
+                        info.Plugin.Name);
                 }
             }
         }
@@ -57,15 +62,27 @@ namespace BadaBingBot.Plugin
         {
             foreach(var info in plugins.Values)
             {
-                logger.Debug("Unloading {0} plugin instances", info.Plugin.Name);
+                logger.Info("Unloading {0} plugin instances", info.Plugin.Name);
                 foreach(var instance in info.Instances)
                 {
-                    instance.Unload();
+                    try
+                    {
+                        instance.Unload();
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.Error(ex, "Unhandled exception while unloading instance of plugin {0}",
+                            info.Plugin.Name);
+                    }
+                    
                 }
             }
+
+            plugins.Clear();
         }
 
-        private struct PluginInfo
+
+        public struct PluginInfo
         {
             public IPlugin Plugin { get; private set; }
             public IList<IPluginInstance> Instances { get; set; }

@@ -17,7 +17,7 @@ namespace BadaBingBot.Test
         public void Setup()
         {
             logger = Substitute.For<ILogger>();
-            robot = new Robot(logger);
+            robot = new Robot(null, logger);
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace BadaBingBot.Test
             var message = new ThreadMessage(this);
             robot.Publish(message);
             
-            Assert.IsTrue(message.WaitHandle.WaitOne(200));
+            Assert.IsTrue(message.WaitHandle.WaitOne(2000));
         }
 
         [Test]
@@ -49,10 +49,10 @@ namespace BadaBingBot.Test
                 throw ex;
             });
 
-            var message = new ThreadMessage(this, "");
+            var message = new ThreadMessage(this);
             robot.Publish(message);
 
-            Assert.IsFalse(message.WaitHandle.WaitOne(200));
+            Assert.IsFalse(message.WaitHandle.WaitOne(50));
             logger.Received().Error(ex, "Unhandled exception thrown by a message subscriber.");
         }
 
@@ -74,7 +74,7 @@ namespace BadaBingBot.Test
             var message = new ThreadMessage(this);
             robot.Publish(message);
 
-            Assert.IsTrue(message.WaitHandle.WaitOne(200));
+            Assert.IsTrue(message.WaitHandle.WaitOne(2000));
             Assert.IsTrue(secondReceived);
             Assert.IsTrue(firstReceived);
         }
@@ -90,7 +90,7 @@ namespace BadaBingBot.Test
             var message = new SubThreadMessage(this, "");
             robot.Publish(message);
             
-            Assert.IsTrue(message.WaitHandle.WaitOne(200));
+            Assert.IsTrue(message.WaitHandle.WaitOne(2000));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace BadaBingBot.Test
             var message = new ThreadMessage(this);
             robot.Publish(message);
             
-            Assert.IsTrue(message.WaitHandle.WaitOne(200));
+            Assert.IsTrue(message.WaitHandle.WaitOne(2000));
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace BadaBingBot.Test
             var message = new SubThreadMessage(this, "");
             robot.Publish(message);
 
-            Assert.IsFalse(message.WaitHandle.WaitOne(200));
+            Assert.IsFalse(message.WaitHandle.WaitOne(50));
             logger.DidNotReceive().Error(Arg.Any<Exception>(), Arg.Any<string>());
         }
     }

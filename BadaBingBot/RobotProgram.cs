@@ -21,7 +21,7 @@ namespace BadaBingBot
         public void Run()
         {
             logger.Info("{0} Powering UP!", config.Name);
-            pluginManager.LoadPlugins(robot);
+            pluginManager.LoadPlugins();
         }
 
         public void Terminate()

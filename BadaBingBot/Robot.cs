@@ -32,8 +32,12 @@ namespace BadaBingBot
         private readonly EventAggregator aggregator;
         private readonly TaskFactory taskFactory;
 
-        public Robot(ILogger logger)
+        public string Name { get; private set; }
+
+        public Robot(IConfig config, ILogger logger)
         {
+            Name = config == null || string.IsNullOrWhiteSpace(config.Name) ? "BadaBingBot" : config.Name;
+
             this.logger = logger;
 
             taskFactory = new TaskFactory();

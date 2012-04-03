@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakePlugin.cs" />
-    <Compile Include="Fakes\ThrowingCreateInstance.cs" />
+    <Compile Include="Fakes\ThrowingPlugin.cs" />
     <Compile Include="PluginManagerTests.cs" />
     <Compile Include="RobotEventTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
