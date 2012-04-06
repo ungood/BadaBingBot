@@ -61,14 +61,14 @@ namespace BadaBingBot
         }
 
         public IDisposable Subscribe<TMessage>(Action<TMessage> callback)
-            where TMessage : IMessage
+            where TMessage : Message
         {
             var handler = new ActionHandler<TMessage>(callback);
             aggregator.Subscribe(handler);
             return new SubscriptionToken<TMessage>(aggregator, handler);
         }
 
-        public void Publish<TMessage>(TMessage message) where TMessage : IMessage
+        public void Publish<TMessage>(TMessage message) where TMessage : Message
         {
             aggregator.Publish(message);
         }

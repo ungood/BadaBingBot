@@ -2,14 +2,29 @@
 
 namespace BadaBingBot.Jenkins
 {
-    public class BuildMessage : MessageBase
+    public class BuildMessage : Message
     {
-        public string JobName { get; set; }
-        public string Result { get; set; }
-        
-        public BuildMessage(object sender)
-            : base(sender)
+        public string JobName
         {
+            get { return this["jobName"]; }
+            set { this["jobName"] = value; }
+        }
+
+        public string Result
+        {
+            get { return this["result"]; }
+            set { this["result"] = value; }
+        }
+
+        public string Text
+        {
+            get { return this["text"]; }
+            set { this["text"] = value; }
+        }
+
+        public override string ToString()
+        {
+            return Text;
         }
     }
 }

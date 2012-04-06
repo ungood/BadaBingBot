@@ -16,8 +16,6 @@
 #endregion
 
 using System;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace BadaBingBot.Api
 {
@@ -27,39 +25,51 @@ namespace BadaBingBot.Api
         string Description { get; }
         Uri Url { get; }
 
-        IPluginInstance CreateInstance(XElement configElement);
+        void Load();
+        void Unload();
     }
 
-    public abstract class PluginBase : IPlugin
+    public interface IPlugin<in TConfig> : IPlugin
+    {
+        void Configure(TConfig config);
+    }
+
+    public abstract class Plugin : IPlugin
     {
         public abstract string Name { get; }
         public abstract string Description { get; }
         public abstract Uri Url { get; }
-        public abstract IPluginInstance CreateInstance(XElement configElement);
+        
+        public virtual void Load()
+        {
+        }
+
+        public virtual void Unload()
+        {
+        }
 
         protected ILogger Logger { get; private set; }
         protected IRobot Robot { get; private set; }
 
-        protected PluginBase(IRobot robot, ILogger logger)
+        protected Plugin(IRobot robot, ILogger logger)
         {
             Logger = logger;
             Robot = robot;
         }
-
-        protected TConfig DeserializeConfig<TConfig>(XElement configElement)
-        {
-            var serializer = new XmlSerializer(typeof (TConfig));
-            using(var reader = configElement.CreateReader())
-            {
-               reader.MoveToContent();
-               return (TConfig)serializer.Deserialize(configElement.CreateReader());
-            }
-        }
     }
 
-    public interface IPluginInstance
+    public abstract class Plugin<TConfig> : Plugin, IPlugin<TConfig>
     {
-        void Load();
-        void Unload();
+        protected TConfig Config { get; private set; }
+
+        protected Plugin(IRobot robot, ILogger logger)
+            : base(robot, logger)
+        {
+        }
+
+        public void Configure(TConfig config)
+        {
+            Config = config;
+        }
     }
 }

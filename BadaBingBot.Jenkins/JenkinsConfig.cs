@@ -2,13 +2,13 @@
 
 namespace BadaBingBot.Jenkins
 {
-    [XmlRoot("jenkins")]
     public class JenkinsConfig
     {
         [XmlElement("server")]
         public ServerSettings[] Servers { get; set; }
     }
 
+    
     public class ServerSettings
     {
         [XmlAttribute("url")]

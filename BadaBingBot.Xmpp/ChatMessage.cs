@@ -15,23 +15,22 @@
 // limitations under the License.
 #endregion
 
-using System;
 using BadaBingBot.Api;
 using agsXMPP;
-using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
-using agsXMPP.protocol.extensions.html;
+using XmppMessage = agsXMPP.protocol.client.Message;
 
 namespace BadaBingBot.Xmpp
 {
-    public class ChatMessage : ChatMessageBase
+    public class ChatMessage : Api.ChatMessage
     {
         private readonly XmppClientConnection client;
 
         public Jid From { get; private set; }
         public bool IsGroupChat { get; private set; }
+        public string Text { get; private set; }
 
-        public ChatMessage(XmppClientConnection client, Message message)
+        public ChatMessage(XmppClientConnection client, XmppMessage message)
         {
             this.client = client;
 
@@ -53,7 +52,7 @@ namespace BadaBingBot.Xmpp
                 ? MessageType.groupchat
                 : MessageType.chat;
 
-            var msg = new Message(to) {
+            var msg = new XmppMessage(to) {
                 Type = type,
                 Body = text
             };

@@ -23,7 +23,7 @@ namespace BadaBingBot.Test
         [Test]
         public void PublishMessageWithNoSubscribersShouldNotFail()
         {
-            robot.Publish(new MessageBase(this, "Hello World!"));
+            robot.Publish(new Message());
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace BadaBingBot.Test
                 msg.Signal();
             });
 
-            var message = new ThreadMessage(this);
+            var message = new ThreadMessage();
             robot.Publish(message);
             
             Assert.IsTrue(message.WaitHandle.WaitOne(2000));
@@ -49,7 +49,7 @@ namespace BadaBingBot.Test
                 throw ex;
             });
 
-            var message = new ThreadMessage(this);
+            var message = new ThreadMessage();
             robot.Publish(message);
 
             Assert.IsFalse(message.WaitHandle.WaitOne(50));
@@ -71,7 +71,7 @@ namespace BadaBingBot.Test
                 msg.Signal();
             });
 
-            var message = new ThreadMessage(this);
+            var message = new ThreadMessage();
             robot.Publish(message);
 
             Assert.IsTrue(message.WaitHandle.WaitOne(2000));
@@ -87,7 +87,7 @@ namespace BadaBingBot.Test
                 msg.Signal();
             });
             
-            var message = new SubThreadMessage(this, "");
+            var message = new SubThreadMessage();
             robot.Publish(message);
             
             Assert.IsTrue(message.WaitHandle.WaitOne(2000));
@@ -102,7 +102,7 @@ namespace BadaBingBot.Test
             });
             GC.Collect();
 
-            var message = new ThreadMessage(this);
+            var message = new ThreadMessage();
             robot.Publish(message);
             
             Assert.IsTrue(message.WaitHandle.WaitOne(2000));
@@ -116,7 +116,7 @@ namespace BadaBingBot.Test
             });
             token.Dispose();
             
-            var message = new SubThreadMessage(this, "");
+            var message = new SubThreadMessage();
             robot.Publish(message);
 
             Assert.IsFalse(message.WaitHandle.WaitOne(50));

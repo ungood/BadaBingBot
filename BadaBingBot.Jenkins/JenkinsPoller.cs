@@ -27,37 +27,32 @@ namespace BadaBingBot.Jenkins
     {
         private readonly ILogger logger;
         private readonly IRobot robot;
-        private readonly TimeSpan interval;
         private readonly JenkinsMonitor monitor;
 
-        public JenkinsPoller(IRobot robot, ServerSettings settings, ILogger logger)
+        public JenkinsPoller(string server, IRobot robot, ILogger logger)
         {
             this.robot = robot;
             this.logger = logger;
-            interval = TimeSpan.FromMilliseconds(settings.PollingInterval);
-            monitor = new JenkinsMonitor(new Uri(settings.Url));
-
+            
             monitor.PollingError += OnPollingError;
             monitor.BuildStarted += OnBuildStarted;
             monitor.BuildAborted += (sender, e) => PublishBuild(e, "abort");
             monitor.BuildFailed += (sender, e) => PublishBuild(e, "fail");
             monitor.BuildSucceeded += (sender, e) => PublishBuild(e, "succeed");
             monitor.BuildUnstable += (sender, e) => PublishBuild(e, "fail");
+
+            monitor = new JenkinsMonitor(new Uri(server));
+            //robot.ScheduleJob(interval, Poll);
         }
 
-        public void StartPolling()
-        {
-            robot.ScheduleJob(interval, Poll);
-        }
-
-        private void Poll()
+        public void Poll()
         {
             try
             {
                 logger.Debug("Polling: {0}", monitor.BaseUri);
                 monitor.Poll(5000);
             }
-            catch(TimeoutException)
+            catch (TimeoutException)
             {
             }
         }
@@ -69,7 +64,8 @@ namespace BadaBingBot.Jenkins
 
         private void OnBuildStarted(object sender, BuildEventArgs e)
         {
-            var message = new BuildMessage(this) {
+            var message = new BuildMessage
+            {
                 JobName = e.Job.Name,
                 Result = "started",
                 Text = e.Job + " started.",
@@ -90,13 +86,14 @@ namespace BadaBingBot.Jenkins
                 e.StatusChanged ? "" : "still ",
                 tense);
 
-            if(e.Build.Culprits != null)
+            if (e.Build.Culprits != null)
             {
                 var culprits = e.Build.Culprits.Select(u => u.FullName);
                 text.AppendFormat(" Culprits: {0}", string.Join(", ", culprits));
             }
 
-            var message = new BuildMessage(this) {
+            var message = new BuildMessage
+            {
                 JobName = e.Job.Name,
                 Result = tense,
                 Text = text.ToString()

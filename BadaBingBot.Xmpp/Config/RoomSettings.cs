@@ -19,6 +19,6 @@ namespace BadaBingBot.Xmpp.Config
         public string Password { get; set; }
 
         [XmlElement("subscription")]
-        public SubscriptionFilter[] SubscriptionFilters { get; set; }
+        public MessageFilter[] MessageFilters { get; set; }
     }
 }

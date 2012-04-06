@@ -52,7 +52,6 @@
     <Compile Include="BuildMessage.cs" />
     <Compile Include="JenkinsConfig.cs" />
     <Compile Include="JenkinsPlugin.cs" />
-    <Compile Include="JenkinsPluginInstance.cs" />
     <Compile Include="JenkinsPoller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

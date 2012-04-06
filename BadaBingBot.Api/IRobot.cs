@@ -25,10 +25,10 @@ namespace BadaBingBot.Api
 
         void ScheduleJob(TimeSpan interval, Action action);
 
-        void Publish<TMessage>(TMessage message)
-            where TMessage : IMessage;
+        void Publish<TMessage>(IPlugin source, TMessage message)
+            where TMessage : Message;
 
-        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber)
-            where TMessage : IMessage;
+        IDisposable Subscribe<TMessage>(Action<TMessage> subscriber, params MessageFilter[] filters)
+            where TMessage : Message;
     }
 }

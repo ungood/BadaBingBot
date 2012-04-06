@@ -25,6 +25,9 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.disco;
 using agsXMPP.protocol.x.muc;
 
+using XmppMessage = agsXMPP.protocol.client.Message;
+using RobotMessage = BadaBingBot.Api.Message;
+
 namespace BadaBingBot.Xmpp
 {
     public class XmppPluginInstance : IPluginInstance
@@ -127,14 +130,14 @@ namespace BadaBingBot.Xmpp
                 chatManager.JoinRoom(roomJid, nickname, room.Password, true);
                 chatManager.AcceptDefaultConfiguration(roomJid);
 
-                robot.Subscribe<IMessage>(msg => NotifyRoomOfMessage(roomJid, msg));
+                robot.Subscribe<RobotMessage>(msg => NotifyRoomOfMessage(roomJid, msg));
             }
         }
 
-        private void NotifyRoomOfMessage(Jid roomJid, IMessage message)
+        private void NotifyRoomOfMessage(Jid roomJid, RobotMessage message)
         {
-            var notification = new Message(roomJid) {
-                Body = message.Text
+            var notification = new XmppMessage(roomJid) {
+                Body = message.ToString()
             };
 
             //client.Send(notification);
@@ -149,22 +152,21 @@ namespace BadaBingBot.Xmpp
                 client.PresenceManager.ApproveSubscriptionRequest(pres.From);
         }
 
-        private void OnMessage(object sender, Message msg)
+        private void OnMessage(object sender, XmppMessage msg)
         {
             if(string.IsNullOrEmpty(msg.Body)
                 || msg.From == null
                 || ignoredJids.Contains(msg.From.ToString().ToLowerInvariant()))
                 return;
 
-            logger.Debug("Message received from {0} [{1}]: {2}",
+            logger.Debug("MessageBase received from {0} [{1}]: {2}",
                 msg.From, msg.Type, msg.Body);
 
             
             if(msg.Type == MessageType.chat || msg.Type == MessageType.groupchat)
             {
-                var chatMessage = new ChatMessage(client, msg) {
-                    Sender = this
-                };
+                var chatMessage = new ChatMessage(client, msg);
+                    
                 robot.Publish(chatMessage);
             }
         }

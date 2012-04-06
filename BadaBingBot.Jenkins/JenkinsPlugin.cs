@@ -16,12 +16,11 @@
 #endregion
 
 using System;
-using System.Xml.Linq;
 using BadaBingBot.Api;
 
 namespace BadaBingBot.Jenkins
 {
-    public class JenkinsPlugin : PluginBase
+    public class JenkinsPlugin : Plugin<JenkinsConfig>
     {
         public JenkinsPlugin(IRobot robot, ILogger logger)
             : base(robot, logger)
@@ -43,10 +42,14 @@ namespace BadaBingBot.Jenkins
             get { return new Uri("http://github.com/ungood/badabingbot"); }
         }
 
-        public override IPluginInstance CreateInstance(XElement configElement)
+        public override void Load()
         {
-            var config = DeserializeConfig<JenkinsConfig>(configElement);
-            return new JenkinsPluginInstance(config, Robot, Logger);
+            foreach(var server in Config.Servers)
+            {
+                var interval = TimeSpan.FromMilliseconds(server.PollingInterval);
+                var poller = new JenkinsPoller(server.Url, Robot, Logger);
+                Robot.ScheduleJob(interval, poller.Poll);
+            }
         }
     }
 }

@@ -16,20 +16,13 @@
 #endregion
 namespace BadaBingBot.Api
 {
-    public interface IChatMessage : IMessage
+    public abstract class ChatMessage : Message
     {
-        string Username { get; }
-        void Reply(string text, bool replyPrivate = false);
-    }
-
-    public abstract class ChatMessageBase : IChatMessage
-    {
-        public object Sender { get; set; }
-
-        public string Category { get; set; }
-
-        public string Text { get; set; }
-        public string Username { get; set; }
+        public string Username
+        {
+            get { return this["username"]; }
+            set { this["username"] = value; }
+        }
 
         public abstract void Reply(string text, bool replyPrivate = false);
     }

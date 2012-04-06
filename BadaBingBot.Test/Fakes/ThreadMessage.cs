@@ -4,7 +4,7 @@ using BadaBingBot.Api;
 
 namespace BadaBingBot.Test.Fakes
 {
-    public class ThreadMessage : MessageBase
+    public class ThreadMessage : Message
     {
         private readonly AutoResetEvent evt = new AutoResetEvent(false);
 
@@ -17,20 +17,10 @@ namespace BadaBingBot.Test.Fakes
         {
             evt.Set();
         }
-
-        public ThreadMessage(object sender, string text = "")
-            : base(sender, text)
-        {
-        }
     }
 
 
     public class SubThreadMessage : ThreadMessage
     {
-        public SubThreadMessage(object sender, string text)
-            : base(sender, text)
-        {
-
-        }
     }
 }

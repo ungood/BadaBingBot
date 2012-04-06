@@ -48,12 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SubscriptionFilterExtensions.cs" />
     <Compile Include="Fakes\FakePlugin.cs" />
     <Compile Include="Fakes\ThrowingPlugin.cs" />
+    <Compile Include="PluginConfigSerializerTests.cs" />
     <Compile Include="PluginManagerTests.cs" />
     <Compile Include="RobotEventTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fakes\ThreadMessage.cs" />
+    <Compile Include="SubscriptionFilterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
